@@ -1,0 +1,6 @@
+﻿nameSpace.interfaz = {
+
+ 
+
+    
+}

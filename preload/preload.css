@@ -1,0 +1,15 @@
+#preloadInitDiv {
+  position:absolute;
+  z-index: 99999;
+  visibility:visible;
+  display: block;
+  top: 48%;
+  left: 47%;
+}
+
+#preloadIcon { 
+  width: 30px;
+  z-index: 99999; 
+}
+
+
