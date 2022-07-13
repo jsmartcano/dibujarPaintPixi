@@ -3,8 +3,8 @@ $height: 590px;
 $width_palette: 180px;
 $height_palette: 261px;
 
-$width_canvas: 987px;
-$height_canvas: 448px;
+$width_canvas: 973px;
+$height_canvas: 562px;
 
 // Estilos
 html,
@@ -47,13 +47,11 @@ body {
       position: absolute;
       outline: 1px solid rgb(95, 90, 90);
 
-      width: 987px;
-      height: 448px;
       display: block;
       position: absolute;
       outline: 1px solid #5f5a5a;
-      top: 136px;
-      left: 6px;
+      top: 13px;
+      left: 13px;
 
       canvas {
         width: $width_canvas;
@@ -69,22 +67,120 @@ body {
       display: flex;
       align-items: center;
       justify-content: center;
-      top: 219px;
-      //left: 972px;
-      left: 772px;
+      top: 158px;
+      left: 822px;
       outline: 1px solid red;
       background-image: url('../images/paleta.png');
+      z-index: 200;
+
+      #activador {
+        width: 20px;
+        height: 74px;
+        border: 1px solid red;
+        left: 0px;
+        position: absolute;
+        cursor: pointer;
+      }
+
+      .panel {
+        display: none;
+        flex-wrap: wrap;
+        position: relative;
+        height: 221px;
+        width: 132px;
+        left: 12px;
+        justify-content: space-evenly;
+      }
+
+      .volver {
+        background-image: url('../images/volver.png') !important;
+      }
+
+      #panel_principal {
+        display: flex;
+      }
 
       .btn_panel {
-        border: 1px solid red;
         width: 50px;
         height: 50px;
+        background: #ffffff;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 3px;
+
+        &.selected {
+          outline: 2px solid gray;
+        }
+      }
+
+      #pintar {
+        background-image: url('../images/lapiz.png');
+      }
+      #grosor {
+        background-image: url('../images/grosor1.png');
+      }
+      #formas {
+        background-image: url('../images/formas.png');
+      }
+      #linea {
+        background-image: url('../images/lineas.png');
+      }
+      #colores {
+        background-color: #000000;
+      }
+      #personajes {
+        background-image: url('../images/personajes.png');
+      }
+      #tampon {
+        background-image: url('../images/tampon.png');
+      }
+      #borrar {
+        background-image: url('../images/borrador.png');
+      }
+
+      #color_0 {
+        background-color: #f8ff4b;
+      }
+      #color_1 {
+        background-color: #d48746;
+      }
+      #color_2 {
+        background-color: #8eae60;
+      }
+      #color_3 {
+        background-color: #ffffff;
+      }
+      #color_4 {
+        background-color: #c03866;
+      }
+      #color_5 {
+        background-color: #5e77bb;
+      }
+      #color_6 {
+        background-color: #000000;
+      }
+
+      .grosor_1,
+      #grosor_1 {
+        background-image: url('../images/grosor1.png') !important;
+      }
+      .grosor_2,
+      #grosor_2 {
+        background-image: url('../images/grosor2.png') !important;
+      }
+      .grosor_3,
+      #grosor_3 {
+        background-image: url('../images/grosor3.png') !important;
+      }
+      .grosor_4,
+      #grosor_4 {
+        background-image: url('../images/grosor4.png') !important;
       }
     }
   }
 }
 
-@keyframes btn-completed {
+@keyframes animate_btn {
   0% {
     transform: scale(0.95);
   }
@@ -97,4 +193,8 @@ body {
   100% {
     transform: scale(1);
   }
+}
+
+.btn_pressed {
+  animation: animate_btn 0.3s;
 }

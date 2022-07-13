@@ -47,8 +47,6 @@
     <script type="text/javascript" src="core/constants.js" charset="utf-8"></script>
     <script type="text/javascript" src="CONFIGURACION_E_INSTRUCCIONES.js" charset="utf-8"></script>
     <script type="text/javascript" src="core/main.js" charset="utf-8"></script>
-    <script type="text/javascript" src="includes/pixi.min.js" charset="utf-8"></script>
-
 
 
 
@@ -60,19 +58,40 @@
     <div id="resizable_wrapper">
         <div id="game_wrapper">
             <div id="palette">
-                <div id="panel_principal">
-                    <div id="pintar" class="btn_panel"></div>
+                <div id="activador"></div>
+                <div id="panel_principal" class="panel">
+                    <div id="pintar" class="btn_panel btn_tool btn_tool_0"></div>
                     <div id="grosor" class="btn_panel"></div>
                     <div id="formas" class="btn_panel"></div>
-                    <div id="linea" class="btn_panel"></div>
+                    <div id="linea" class="btn_panel btn_tool btn_tool_2"></div>
                     <div id="colores" class="btn_panel"></div>
                     <div id="personajes" class="btn_panel"></div>
                     <div id="tampon" class="btn_panel"></div>
-                    <div id="borrar" class="btn_panel"></div>
+                    <div id="borrar" class="btn_panel btn_tool btn_tool_4"></div>
+                </div>
+                <div id="panel_grosor" class="panel">
+                    <div id="grosor_1" class="btn_panel btn_grosor"></div>
+                    <div id="grosor_2" class="btn_panel btn_grosor"></div>
+                    <div id="grosor_3" class="btn_panel btn_grosor"></div>
+                    <div id="grosor_4" class="btn_panel btn_grosor"></div>
+                    <div class="btn_panel"></div>
+                    <div class="btn_panel"></div>
+                    <div class="btn_panel volver"></div>
+                    <div class="btn_panel"></div>
+                </div>
+                <div id="panel_colores" class="panel">
+                    <div id="color_0" class="btn_panel btn_color"></div>
+                    <div id="color_1" class="btn_panel btn_color"></div>
+                    <div id="color_2" class="btn_panel btn_color"></div>
+                    <div id="color_3" class="btn_panel btn_color"></div>
+                    <div id="color_4" class="btn_panel btn_color"></div>
+                    <div id="color_5" class="btn_panel btn_color"></div>
+                    <div class="btn_panel volver"></div>
+                    <div id="color_6" class="btn_panel btn_color"></div>
                 </div>
             </div>
             <div id="canvas_wrapper">
-
+                <canvas id="canvas" width="973" height="562"></canvas>
             </div>
         </div>
     </div>

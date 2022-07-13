@@ -10,9 +10,7 @@ var nameSpace = nameSpace || {};
 		
 
 		// --------------------------------------------
-		this.enter = function () {
-			_self.SkinManager._customSkin.createApp();
-			_self.SkinManager._customSkin.refreshColours();
+		this.enter = function () {			
 			_self.SkinManager._customSkin.drawScene();
 		}
 

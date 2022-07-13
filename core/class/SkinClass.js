@@ -5,94 +5,335 @@
  * Jose Martinez 2022
 */
 
+
+
 var nameSpace = nameSpace || {};
 (function (nameSpace) {
     nameSpace.SkinClass = function (_self) {
 
 
-        var app;
-        var graphics;
-        var ctx;
-        var canvas
-        var renderer;
 
-        var colours = [0xF8FF4B, 0xD48746, 0x8EAE60, 0xFFFFFF, 0xC03866, 0xC03866,0x000000];
+        var canvas = document.getElementById("canvas");
+        var ctx = canvas.getContext("2d");
 
-        // var canvas = document.getElementById("canvas");
-        // var ctx = canvas.getContext("2d");
+        var colours = ["#F8FF4B", "#D48746", "#8EAE60", "#FFFFFF", "#C03866", "#5E77BB", "#000000"];
 
 
         var x = 0;
         var y = 0;
         var drawing = false;
-        var size = 5;
-        var colorSelected = 0;
-        var color = colours[colorSelected];
         var completed = false;
 
         var self = this;
 
+        /** 
+        * Tools:
+        * 0: LAPIZ, (DIBUJANDO)
+        * 1: SPRITE
+        * 2: LINEA
+        * 3: PERSONAJES
+        * 4: GOMA
+        *
+        */
+
+
+        var gameState = {
+            size: null,
+            sizeIndex: null,
+            colorInex: null,
+            color: null,
+            tool: null
+        }
+
+
+        // ------------------------------------------------
+        this.refreshScreen = function () {
+
+            // colores
+            gameState.color = colours[gameState.colorIndex],
+            $("#colores").css("background-color", gameState.color);
+
+            // grosores
+            $("#grosor").removeClass("grosor_1");
+            $("#grosor").removeClass("grosor_2");
+            $("#grosor").removeClass("grosor_3");
+            $("#grosor").removeClass("grosor_4");
+            switch (gameState.sizeIndex) {
+                case 1: $("#grosor").addClass("grosor_1"); break;
+                case 2: $("#grosor").addClass("grosor_2"); break;
+                case 3: $("#grosor").addClass("grosor_3"); break;
+                case 4: $("#grosor").addClass("grosor_4"); break;
+            }
+
+            // Herramientas
+            $(".btn_tool").removeClass("selected");
+            $(".btn_tool_"+gameState.tool).addClass("selected"); 
+
+            
+
+        }
+
 
         // -----------------------------------------------------------------------
-        this.createApp = function () {
-            app = new PIXI.Application({
+        this.drawScene = function () {
 
-                width: 987, height: 448,
-                backgroundAlpha: 0, autostart: true
-            })
-            graphics = new PIXI.Graphics();
-            canvas = document.getElementById("canvas_wrapper");
-            canvas.appendChild(app.view);
+            gameState.size = 4;
+            gameState.colorIndex = 6;
+            gameState.tool = 0;
+            gameState.color = colours[gameState.colorIndex],
+                self.refreshScreen();
 
-
-
-            // -----------------------------------------------------------------------
-            $("#canvas_wrapper").bind('mousedown touchstart', function (e) {
-                x = self.getRealX(e);
-                y = self.getRealY(e);
-                drawing = true;
-                completed = true;
-                self.draw(x, y, x, y);
-            })
-
-            // -----------------------------------------------------------------------
-            $("#canvas_wrapper").bind('mousemove touchmove', function (e) {
-                if (drawing === true) {
-                    var x2 = self.getRealX(e);
-                    var y2 = self.getRealY(e);
-                    self.draw(x, y, x2, y2);
-                    x = x2;
-                    y = y2;
-                }
-            })
+        }
 
 
+        /**
+         * EVENTOS PRINCIPALES DE RATON Y TOUCH
+         ***********************************************************************/
+        // -----------------------------------------------------------------------
+        $("#canvas").bind('mousedown touchstart', function (e) {
 
-            // -----------------------------------------------------------------------
-            $("#canvas_wrapper").bind('mouseout touchend', function (e) {
+            completed = true;
+            switch (gameState.tool) {
+                case 0: self.pencil_start(e); break;
+                case 4: self.clear_start(e); break;
+            }
+            self.refreshScreen();
+        })
+
+        // -----------------------------------------------------------------------
+        $("#canvas").bind('mousemove touchmove', function (e) {
+            switch (gameState.tool) {
+                case 0: self.pencil_move(e); break;
+                case 4: self.clear_move(e); break;
+            }
+            self.refreshScreen();
+        })
+
+        // -----------------------------------------------------------------------
+        $("#canvas").bind('mouseout touchend', function (e) {
+            switch (gameState.tool) {
+                case 0: self.pencil_out(e); break;
+                case 4: self.clear_out(e); break;
+            }
+            self.refreshScreen();
+        })
+
+        // -----------------------------------------------------------------------
+        $("#canvas").bind('mouseup touchend', function (e) {
+            switch (gameState.tool) {
+                case 0: self.pencil_end(e); break;
+                case 4: self.clear_end(e); break;
+            }
+            self.refreshScreen();
+        })
+
+        $(".btn_panel").bind("click mousedown", function () {
+            // $(".btn_panel").removeClass("btn_pressed");
+            var elem = $(this);
+            elem.addClass("btn_pressed");
+            setTimeout(function () {
+                elem.removeClass("btn_pressed");
+            }, 300)
+            self.refreshScreen();
+        })
+
+        $(".volver").bind("mousedown touchstart", function () {
+            setTimeout(function () {
+                $(".panel").css("display", "none");
+                $("#panel_principal").css("display", "flex");
+            }, 300)
+
+        })
+
+        $("#pintar").bind("mousedown touchstart", function () {
+            gameState.tool = 0;
+        })
+
+        $(".btn_color").bind("mousedown touchstart", function () {
+            var id = $(this).attr("id").split("_")[1];
+            gameState.colorIndex = id;
+            gameState.color = colours[id];
+            self.refreshScreen();
+            setTimeout(function () {
+                $(".panel").css("display", "none");
+                $("#panel_principal").css("display", "flex");
+            }, 300)
+        })
+
+        $(".btn_grosor").bind("mousedown touchstart", function () {
+            var id = $(this).attr("id").split("_")[1];
+            id = parseInt(id, 10);
+            gameState.sizeIndex = id
+
+            switch (id) {
+                case 1: gameState.size = 4; break;
+                case 2: gameState.size = 8; break;
+                case 3: gameState.size = 12; break;
+                case 4: gameState.size = 18; break;
+            }
+
+            self.refreshScreen();
+            setTimeout(function () {
+                $(".panel").css("display", "none");
+                $("#panel_principal").css("display", "flex");
+            }, 300)
+        })
+
+        $("#grosor").bind("mousedown touchstart", function () {
+            setTimeout(function () {
+                $(".panel").css("display", "none");
+                $("#panel_grosor").css("display", "flex");
+            }, 300)
+        })
+
+        $("#formas").bind("mousedown touchstart", function () {
+
+        })
+
+        $("#linea").bind("mousedown touchstart", function () {
+            gameState.tool = 2;
+        })
+
+        $("#colores").bind("mousedown touchstart", function () {
+            setTimeout(function () {
+                $(".panel").css("display", "none");
+                $("#panel_colores").css("display", "flex");
+            }, 300)
+        })
+
+        $("#personajes").bind("mousedown touchstart", function () {
+
+        })
+
+        $("#borrar").bind("mousedown touchstart", function () {
+            gameState.tool = 4;
+        })
+
+        /* ******************************************************************* */
+
+
+        // LAPIZ
+        // *****************************************************************
+        // ------------------------------------------------
+        this.pencil_start = function (e) {
+            x = this.getRealX(e);
+            y = this.getRealY(e);
+            drawing = true;
+            this.pencil_draw(x, y, x, y);
+        }
+
+        // ------------------------------------------------
+        this.pencil_move = function (e) {
+            if (drawing === true) {
+                var x2 = this.getRealX(e);
+                var y2 = this.getRealY(e);
+                this.pencil_draw(x, y, x2, y2);
+                x = x2;
+                y = y2;
+            }
+        }
+
+        // ------------------------------------------------
+        this.pencil_out = function (e) {
+            x = 0;
+            y = 0;
+            drawing = false;
+        }
+
+        // ------------------------------------------------
+        this.pencil_end = function (e) {
+            if (drawing === true) {
+                var x2 = this.getRealX(e);
+                var y2 = this.getRealY(e);
+                this.pencil_draw(x, y, x2, y2)
                 x = 0;
                 y = 0;
                 drawing = false;
-            })
-
-            // -----------------------------------------------------------------------
-            $("#canvas_wrapper").bind('mouseup touchend', function (e) {
-                if (drawing === true) {
-                    var x2 = self.getRealX(e);
-                    var y2 = self.getRealY(e);
-                    self.draw(x, y, x2, y2)
-                    x = 0;
-                    y = 0;
-                    drawing = false;
-                }
-            })
+            }
         }
 
-        // this.gameLoop = function (delta) {
-        //     _self.DebugManager.say("ee");
-        // }
+        // ------------------------------------------------
+        this.pencil_draw = function (x1, y1, x2, y2) {
+
+            var size = gameState.size;
+            var color = gameState.color;
+
+            console.log("color: " + color);
+
+            if (x1 && y1 && (x2 !== x1 || y2 !== y1)) {
+                ctx.strokeStyle = color;
+                ctx.fillStyle = color;
+                ctx.lineWidth = size * 2;
+                ctx.beginPath();
+                ctx.moveTo(x2, y2);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            }
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(x2, y2, size, 0, Math.PI * 2, true);
+            ctx.closePath();
+            ctx.fill();
+
+        }
+        // ******************************************************************
+
+        // BORRADOR
+        // *****************************************************************
+        // ------------------------------------------------
+        this.clear_start = function (e) {
+            x = this.getRealX(e);
+            y = this.getRealY(e);
+            drawing = true;
+            this.clear_draw(x, y, x, y);
+        }
+
+        // ------------------------------------------------
+        this.clear_move = function (e) {
+            if (drawing === true) {
+                var x2 = this.getRealX(e);
+                var y2 = this.getRealY(e);
+                this.clear_draw(x, y, x2, y2);
+                x = x2;
+                y = y2;
+            }
+        }
+
+        // ------------------------------------------------
+        this.clear_out = function (e) {
+            x = 0;
+            y = 0;
+            drawing = false;
+        }
+
+        // ------------------------------------------------
+        this.clear_end = function (e) {
+            if (drawing === true) {
+                var x2 = this.getRealX(e);
+                var y2 = this.getRealY(e);
+                this.clear_draw(x, y, x2, y2)
+                x = 0;
+                y = 0;
+                drawing = false;
+            }
+        }
+
+        // ------------------------------------------------
+        this.clear_draw = function (x1, y1, x2, y2) {
 
 
+            var r = gameState.size;
+
+            for (var i = 0; i < Math.round(Math.PI * r); i++) {
+                var angle = (i / Math.round(Math.PI * r)) * 360;
+                ctx.clearRect(x, y, Math.sin(angle * (Math.PI / 180)) * r, Math.cos(angle * (Math.PI / 180)) * r);
+            }
+
+
+
+        }
+
+        /** ******************************************** */
 
 
         this.getRealX = function (e) {
@@ -120,15 +361,7 @@ var nameSpace = nameSpace || {};
         }
 
 
-        // -----------------------------------------------------------------------
-        this.drawScene = function () {
 
-
-
-
-
-
-        }
 
         // -----------------------------------
         this.setVariable = function (variable, value) {
@@ -145,42 +378,12 @@ var nameSpace = nameSpace || {};
 
 
 
-        // ------------------------------------------------
-        this.refreshColours = function () {
-
-        }
-
-        this.clearCircle = function (x, y, r) {
-            for (var i = 0; i < Math.round(Math.PI * r); i++) {
-                var angle = (i / Math.round(Math.PI * r)) * 360;
-                graphics.clearRect(x, y, Math.sin(angle * (Math.PI / 180)) * r, Math.cos(angle * (Math.PI / 180)) * r);
-            }
-        }
-
-        // -----------------------------------------------------------------------
-        this.draw = function (x1, y1, x2, y2) {
-
-            if (colorSelected == 8) {
-                this.clearCircle(x2, y2, size * 6);
-            } else {
-
-                if (x1 && y1 && (x2 !== x1 || y2 !== y1)) {
-                    graphics.lineStyle(size * 3, color);
-                    graphics.moveTo(x1, y1);
-                    graphics.lineTo(x2, y2);
-                    graphics.endFill();
-                    app.stage.addChild(graphics);
-
-                }
-                graphics.lineStyle(size, color);
-                graphics.beginFill(color, 1);
-                graphics.drawCircle(x2, y2, size);
-                graphics.endFill();
-                app.stage.addChild(graphics);
-            }
 
 
-        }
+
+
+
+
 
 
         // Redimensionar
@@ -218,6 +421,8 @@ var nameSpace = nameSpace || {};
                 }
             }, 100);
         };
+
+
 
 
 

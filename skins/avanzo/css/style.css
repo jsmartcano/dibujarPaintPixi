@@ -25,21 +25,19 @@ body {
     display: block;
     background-repeat: no-repeat; }
     #resizable_wrapper #game_wrapper #canvas_wrapper {
-      width: 987px;
-      height: 448px;
+      width: 973px;
+      height: 562px;
       display: block;
       position: absolute;
       outline: 1px solid #5f5a5a;
-      width: 987px;
-      height: 448px;
       display: block;
       position: absolute;
       outline: 1px solid #5f5a5a;
-      top: 136px;
-      left: 6px; }
+      top: 13px;
+      left: 13px; }
       #resizable_wrapper #game_wrapper #canvas_wrapper canvas {
-        width: 987px;
-        height: 448px; }
+        width: 973px;
+        height: 562px; }
     #resizable_wrapper #game_wrapper #palette {
       width: 180px;
       height: 261px;
@@ -48,16 +46,83 @@ body {
       display: flex;
       align-items: center;
       justify-content: center;
-      top: 219px;
-      left: 772px;
+      top: 158px;
+      left: 822px;
       outline: 1px solid red;
-      background-image: url("../images/paleta.png"); }
-      #resizable_wrapper #game_wrapper #palette .btn_panel {
+      background-image: url("../images/paleta.png");
+      z-index: 200; }
+      #resizable_wrapper #game_wrapper #palette #activador {
+        width: 20px;
+        height: 74px;
         border: 1px solid red;
+        left: 0px;
+        position: absolute;
+        cursor: pointer; }
+      #resizable_wrapper #game_wrapper #palette .panel {
+        display: none;
+        flex-wrap: wrap;
+        position: relative;
+        height: 221px;
+        width: 132px;
+        left: 12px;
+        justify-content: space-evenly; }
+      #resizable_wrapper #game_wrapper #palette .volver {
+        background-image: url("../images/volver.png") !important; }
+      #resizable_wrapper #game_wrapper #palette #panel_principal {
+        display: flex; }
+      #resizable_wrapper #game_wrapper #palette .btn_panel {
         width: 50px;
-        height: 50px; }
+        height: 50px;
+        background: #ffffff;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 3px; }
+        #resizable_wrapper #game_wrapper #palette .btn_panel.selected {
+          outline: 2px solid gray; }
+      #resizable_wrapper #game_wrapper #palette #pintar {
+        background-image: url("../images/lapiz.png"); }
+      #resizable_wrapper #game_wrapper #palette #grosor {
+        background-image: url("../images/grosor1.png"); }
+      #resizable_wrapper #game_wrapper #palette #formas {
+        background-image: url("../images/formas.png"); }
+      #resizable_wrapper #game_wrapper #palette #linea {
+        background-image: url("../images/lineas.png"); }
+      #resizable_wrapper #game_wrapper #palette #colores {
+        background-color: #000000; }
+      #resizable_wrapper #game_wrapper #palette #personajes {
+        background-image: url("../images/personajes.png"); }
+      #resizable_wrapper #game_wrapper #palette #tampon {
+        background-image: url("../images/tampon.png"); }
+      #resizable_wrapper #game_wrapper #palette #borrar {
+        background-image: url("../images/borrador.png"); }
+      #resizable_wrapper #game_wrapper #palette #color_0 {
+        background-color: #f8ff4b; }
+      #resizable_wrapper #game_wrapper #palette #color_1 {
+        background-color: #d48746; }
+      #resizable_wrapper #game_wrapper #palette #color_2 {
+        background-color: #8eae60; }
+      #resizable_wrapper #game_wrapper #palette #color_3 {
+        background-color: #ffffff; }
+      #resizable_wrapper #game_wrapper #palette #color_4 {
+        background-color: #c03866; }
+      #resizable_wrapper #game_wrapper #palette #color_5 {
+        background-color: #5e77bb; }
+      #resizable_wrapper #game_wrapper #palette #color_6 {
+        background-color: #000000; }
+      #resizable_wrapper #game_wrapper #palette .grosor_1,
+      #resizable_wrapper #game_wrapper #palette #grosor_1 {
+        background-image: url("../images/grosor1.png") !important; }
+      #resizable_wrapper #game_wrapper #palette .grosor_2,
+      #resizable_wrapper #game_wrapper #palette #grosor_2 {
+        background-image: url("../images/grosor2.png") !important; }
+      #resizable_wrapper #game_wrapper #palette .grosor_3,
+      #resizable_wrapper #game_wrapper #palette #grosor_3 {
+        background-image: url("../images/grosor3.png") !important; }
+      #resizable_wrapper #game_wrapper #palette .grosor_4,
+      #resizable_wrapper #game_wrapper #palette #grosor_4 {
+        background-image: url("../images/grosor4.png") !important; }
 
-@keyframes btn-completed {
+@keyframes animate_btn {
   0% {
     transform: scale(0.95); }
   25% {
@@ -66,3 +131,5 @@ body {
     transform: scale(0.95); }
   100% {
     transform: scale(1); } }
+.btn_pressed {
+  animation: animate_btn 0.3s; }
