@@ -53,20 +53,28 @@ body {
       top: 13px;
       left: 13px;
 
-      #canvas_lines {    
+      #canvas_lines {
         z-index: 10;
-      }
-
-      #canvas_images {    
-        z-index: 20;
         display: none;
       }
-      
+
+      #canvas_images {
+        z-index: 20;
+        display: none;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+     
+
+        #newImage {
+          border: 1px solid red;
+        }
+      }
+
       canvas {
         width: $width_canvas;
         height: $height_canvas;
         position: absolute;
-     
       }
     }
 
@@ -171,41 +179,37 @@ body {
         background-color: #000000;
       }
 
-      
-
       // grosores
       @for $i from 1 through 4 {
-        .grosor_#{$i},#grosor_#{$i} {
-          background-image: url('../images/grosor#{$i}.png') !important;          
+        .grosor_#{$i},
+        #grosor_#{$i} {
+          background-image: url('../images/grosor#{$i}.png') !important;
         }
       }
 
       // formas
       @for $i from 0 through 5 {
         #forma_#{$i} {
-          background-image: url('../images/forma_#{$i}.png') !important;          
-          background-size: contain
+          background-image: url('../images/forma_#{$i}.png') !important;
+          background-size: contain;
         }
       }
 
       // personajes
       @for $i from 0 through 5 {
         #personaje_#{$i} {
-          background-image: url('../images/personaje_#{$i}.png') !important;          
-          background-size: contain
+          background-image: url('../images/personaje_#{$i}.png') !important;
+          background-size: contain;
         }
       }
 
       // tampon
       @for $i from 0 through 5 {
         #tampon_#{$i} {
-          background-image: url('../images/tampon_#{$i}.png') !important;          
-          background-size: contain
+          background-image: url('../images/tampon_#{$i}.png') !important;
+          background-size: contain;
         }
       }
-      
-
-      
     }
   }
 }

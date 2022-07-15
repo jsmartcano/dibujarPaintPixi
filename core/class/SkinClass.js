@@ -5,11 +5,15 @@
  * Jose Martinez 2022
 */
 
+
+
+
 var GAME_WIDTH = 973;
 var GAME_HEIGHT = 562;
 
 var CORNER_WIDTH = 30;
 var CORNER_HEIGHT = 30;
+
 
 var nameSpace = nameSpace || {};
 (function (nameSpace) {
@@ -21,10 +25,10 @@ var nameSpace = nameSpace || {};
         var ctx = canvas.getContext("2d");
 
         var canvas_lines = document.getElementById("canvas_lines");
-        var ctx_aux = canvas_lines.getContext("2d");
+        var ctx_lines = canvas_lines.getContext("2d");
 
-        var canvas_images = document.getElementById("canvas_images");
-        var ctx_images = canvas_images.getContext("2d");
+
+
 
 
         var colours = ["#F8FF4B", "#D48746", "#8EAE60", "#FFFFFF", "#C03866", "#5E77BB", "#000000"];
@@ -35,7 +39,6 @@ var nameSpace = nameSpace || {};
         var drawing = false;
         var completed = false;
         var self = this;
-        var image;
 
         /** 
         * Tools:
@@ -46,6 +49,15 @@ var nameSpace = nameSpace || {};
         *
         */
 
+        // ----------- IMAGENES
+        var app;
+        var tr;
+        var tl;
+        var loader;
+        var textures = {};
+        var draggin = false;
+        var image;
+        var MIN_WIDTH = 50;
 
         var gameState = {
             size: null,
@@ -56,12 +68,33 @@ var nameSpace = nameSpace || {};
         }
 
 
+        this.getImage = function () {
+            return image;
+        }
+
+        this.loadTextures = function () {
+            loader = new PIXI.Loader();
+            loader.add("corner", _self.RouteManager.getSkinImages() + "corner.png")
+                .add("forma_0", _self.RouteManager.getSkinImages() + "forma_0.png")
+            loader.load()
+            loader.onComplete.add((loader, resource) => {
+
+                for (var [key, value] of Object.entries(resource)) {
+
+                    textures[key] = value.texture;
+                }
+
+
+                _self.InputManager.fireEvent.apply(_self.InputManager, ["onImagesLoaded"]);
+
+            });
+        }
+
         // ------------------------------------------------
         this.refreshScreen = function () {
 
-            // colores
-            gameState.color = colours[gameState.colorIndex],
-                $("#colores").css("background-color", gameState.color);
+            // coloresgameState.color = colours[gameState.colorIndex],
+            $("#colores").css("background-color", gameState.color);
 
             // grosores
             $("#grosor").removeClass("grosor_1");
@@ -86,7 +119,10 @@ var nameSpace = nameSpace || {};
         this.getCenterCoordinates = function (img) {
             var x = (GAME_WIDTH - img.width) / 2;
             var y = (GAME_HEIGHT - img.height) / 2;
-            return { x, y };
+            newImage.x = x;
+            newImage.y = y;
+            newImage.width = img.width;
+            newImage.height = img.height;
         }
 
 
@@ -96,9 +132,14 @@ var nameSpace = nameSpace || {};
             gameState.size = 4;
             gameState.colorIndex = 6;
             gameState.tool = 0;
-            gameState.color = colours[gameState.colorIndex],
-                self.refreshScreen();
+            gameState.color = colours[gameState.colorIndex];
+            self.refreshScreen();
 
+            app = new PIXI.Application({
+               width: GAME_WIDTH, height: GAME_HEIGHT, transparent: true
+            }
+            );
+            document.getElementById("canvas_images").appendChild(app.view);
         }
 
 
@@ -155,6 +196,9 @@ var nameSpace = nameSpace || {};
                 elem.removeClass("btn_pressed");
             }, 300)
             self.refreshScreen();
+            if (gameState.tool == 3) {
+                self.endImageDrag();
+            }
         })
 
         $(".volver").bind("mousedown touchstart", function () {
@@ -181,7 +225,7 @@ var nameSpace = nameSpace || {};
         })
 
         $(".btn_img").bind("mousedown touchstart", function (e) {
-            var img = $(this).attr("draw_img");
+            var img = $(this).attr("id");
             setTimeout(function () {
                 gameState.tool = 3;
                 $("#" + img.split(".")[0]).addClass("selected");
@@ -272,8 +316,8 @@ var nameSpace = nameSpace || {};
             if (drawing) {
                 var x2 = this.getRealX(e);
                 var y2 = this.getRealY(e);
-                ctx_aux.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-                this.line_draw(x, y, x2, y2, ctx_aux);
+                ctx_lines.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+                this.line_draw(x, y, x2, y2, ctx_lines);
             }
         }
 
@@ -283,7 +327,7 @@ var nameSpace = nameSpace || {};
             if (drawing) {
                 var x2 = this.getRealX(e);
                 var y2 = this.getRealY(e);
-                ctx_aux.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+                ctx_lines.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
                 this.line_draw(x, y, x2, y2, ctx);
                 drawing = false;
             }
@@ -295,8 +339,9 @@ var nameSpace = nameSpace || {};
                 var x2 = this.getRealX(e);
                 var y2 = this.getRealY(e);
                 this.line_draw(x, y, x2, y2, ctx);
-                ctx_aux.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-                drawing = false;
+                ctx_lines.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+                drawing = false; $
+                $("#canvas_lines").css("display", "none");
             }
         }
 
@@ -475,137 +520,99 @@ var nameSpace = nameSpace || {};
             }
         }
 
+        this.endImageDrag = function () {
+            base_image = new Image();
+            base_image.src = image.texture.textureCacheIds[1];
+            base_image.onload = function () {
+                ctx.drawImage(base_image, image.x, image.y, image.width, image.height);
+                var stage = app.stage;
+                for (var i = stage.children.length - 1; i >= 0; i--) { stage.removeChild(stage.children[i]); };
+                $("#canvas_images").css("display", "none");
+                gameState.tool = -1;
+            }
+        }
+
+
+        this.createImageToDraw = function (imageName) {
+            image = new PIXI.Sprite(textures[imageName]);
+            image.x = 100;
+            image.y = 100;
+            app.stage.addChild(image);
+
+            // tl -------------------------            
+            tl = new PIXI.Sprite(textures.corner)
+            tl.interactive = true;
+            tl.buttonMode = true;
+            app.stage.addChild(tl);
+            tl.on('pointerdown', self.onDragLTStart)
+                .on('pointerup', self.onDragLTEnd)
+                .on('pointerupoutside', self.onDragLTEnd)
+                .on('pointermove', self.onDragLTMove);
+
+            // tr -------------------------            
+            tr = new PIXI.Sprite(textures.corner)
+            tr.buttonMode = true;
+            tr.interactive = true;
+            app.stage.addChild(tr);
+            tr.on('pointerdown', self.onDragLRStart)
+                .on('pointerup', self.onDragLREnd)
+                .on('pointerupoutside', self.onDragLREnd)
+                .on('pointermove', self.onDragLRMove);
 
 
 
 
+            // Colocación
+            self.calculateCornersCoords();
+        }
+
+        this.onDragLTStart = function (e) {
+            draggin = true;
+        };
+        this.onDragLTEnd = function (e) {
+            draggin = false;
+        };
+        this.onDragLTMove = function (e) {
+            if (draggin == true) {
+
+                var newPosition = e.data.getLocalPosition(this.parent);
+
+                // x ---------------------
+                var diff = Math.abs(tr.x - newPosition.x);
+                if (diff > MIN_WIDTH && tr.x > newPosition.x) {
+
+
+                    image.width = diff;
+                    image.x = newPosition.x + CORNER_WIDTH / 2;
+                    tl.x = newPosition.x;
+                    self.calculateCornersCoords();
+                }
 
 
 
 
+            }
+        }
+
+        this.onDragLRStart = function (e) { };
+        this.onDragLREnd = function (e) { };
+        this.onDragLRMove = function (e) { }
 
 
+        this.calculateCornersCoords = function () {
+
+            tl.x = image.x - (CORNER_WIDTH / 2);
+            tl.y = image.y - (CORNER_HEIGHT / 2);
+
+            tr.x = image.x + image.width - (CORNER_WIDTH / 2)
+            tr.y = image.y - (CORNER_HEIGHT / 2);
+        }
 
         // Redimensionar
         // -----------------------------------------------------------------------
         this.redim = function () {
-            _self.DebugManager.say("redim screen...");
-            setTimeout(function () {
-                try {
-                    var main = $("#resizable_wrapper");
-                    var htmlContent = $("html");
-                    var game_wrapper = $("#game_wrapper");
 
-                    // Calcular el ratio de largo y ancho, nos quedamos con el menor
-                    var w = (htmlContent.innerWidth() * 100) / game_wrapper.width();
-                    var h = (htmlContent.innerHeight() * 100) / game_wrapper.height();
-                    var ratio = w;
-                    if (h < w) {
-                        ratio = h;
-                    } else {
-                        ratio = w;
-                    }
-                    main.css("position", "absolute");
-                    main.css("transform", "scale(" + (ratio) / 100 + "," + (ratio) / 100 + ")");
-                    main.css("transform-origin", "left top");
-
-                    // Centrar contenido ya escalado
-                    var left = (htmlContent.innerWidth() - (main.width() * ratio / 100)) / 2;
-                    var top = (htmlContent.innerHeight() - (main.height() * ratio / 100)) / 2;
-                    main.css("left", left + "px");
-                    main.css("top", top + "px");
-
-                    //console.log(w + " - " + h);
-                } catch (ee) {
-
-                }
-            }, 100);
         };
-
-        
-        this.createImageToDraw = function (img) {        
-
-            image = new Image();
-            top_left = new Image();
-            top_middle = new Image();
-            top_rigth = new Image();
-
-            middle_left = new Image();
-            middle_middle = new Image();
-            middle_rigth = new Image();
-
-            bottom_left = new Image();
-            bottom_middle = new Image();
-            bottom_rigth = new Image();
-
-            top_left.src = _self.RouteManager.getSkinImages() + "corner.png";
-            top_middle.src = _self.RouteManager.getSkinImages() + "corner.png";
-            top_rigth.src = _self.RouteManager.getSkinImages() + "corner.png";
-
-            middle_left.src = _self.RouteManager.getSkinImages() + "corner.png";
-            middle_middle.src = _self.RouteManager.getSkinImages() + "corner.png";
-            middle_rigth.src = _self.RouteManager.getSkinImages() + "corner.png";
-
-            bottom_left.src = _self.RouteManager.getSkinImages() + "corner.png";
-            bottom_middle.src = _self.RouteManager.getSkinImages() + "corner.png";
-            bottom_rigth.src = _self.RouteManager.getSkinImages() + "corner.png";
-
-            top_left.onload = function () {              
-                var coord = self.calculateCornerCoord("TL", image);  
-                ctx_images.drawImage(top_left, coord.x, coord.y);
-            }
-            top_middle.onload = function () {
-                var coord = self.calculateCornerCoord("TM", image);
-                ctx_images.drawImage(top_middle, coord.x, coord.y);
-            }
-            top_rigth.onload = function () {
-                var coord = self.calculateCornerCoord("TR", image);
-                ctx_images.drawImage(top_rigth, coord.x, coord.y);
-            }
-
-            middle_left.onload = function () {
-                var coord = self.calculateCornerCoord("ML", image);
-                ctx_images.drawImage(middle_left, coord.x, coord.y);
-            }
-            middle_middle.onload = function () {
-                var coord = self.calculateCornerCoord("MM", image);
-                ctx_images.drawImage(middle_middle, coord.x, coord.y);
-            }
-            middle_rigth.onload = function () {
-                var coord = self.calculateCornerCoord("MR", image);
-                ctx_images.drawImage(middle_rigth, coord.x, coord.y);
-            }
-
-            bottom_left.onload = function () {
-                var coord = self.calculateCornerCoord("BL", image);
-                ctx_images.drawImage(bottom_left, coord.x, coord.y);
-            }
-            bottom_middle.onload = function () {
-                var coord = self.calculateCornerCoord("BM", image);
-                ctx_images.drawImage(bottom_middle, coord.x, coord.y);
-            }
-            bottom_rigth.onload = function () {
-                var coord = self.calculateCornerCoord("BR", image);
-                ctx_images.drawImage(bottom_rigth, coord.x, coord.y);
-            }
-
-            image.src = _self.RouteManager.getSkinImages() + img;
-            image.onload = function () {
-                var coord = self.getCenterCoordinates(image);
-                ctx_images.drawImage(image, coord.x, coord.y);
-            }
-        }
-
-        this.calculateCornerCoord = function(type,img) {
-            var first = type.split("")[0];
-            var second = type.split("")[1];
-            var x=100;
-            var y=100;
-            return {x,y};
-        }
-
-
-
 
 
     };
