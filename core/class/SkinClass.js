@@ -5,7 +5,11 @@
  * Jose Martinez 2022
 */
 
+var GAME_WIDTH = 973;
+var GAME_HEIGHT = 562;
 
+var CORNER_WIDTH = 30;
+var CORNER_HEIGHT = 30;
 
 var nameSpace = nameSpace || {};
 (function (nameSpace) {
@@ -16,6 +20,13 @@ var nameSpace = nameSpace || {};
         var canvas = document.getElementById("canvas");
         var ctx = canvas.getContext("2d");
 
+        var canvas_lines = document.getElementById("canvas_lines");
+        var ctx_aux = canvas_lines.getContext("2d");
+
+        var canvas_images = document.getElementById("canvas_images");
+        var ctx_images = canvas_images.getContext("2d");
+
+
         var colours = ["#F8FF4B", "#D48746", "#8EAE60", "#FFFFFF", "#C03866", "#5E77BB", "#000000"];
 
 
@@ -23,15 +34,14 @@ var nameSpace = nameSpace || {};
         var y = 0;
         var drawing = false;
         var completed = false;
-
         var self = this;
+        var image;
 
         /** 
         * Tools:
-        * 0: LAPIZ, (DIBUJANDO)
-        * 1: SPRITE
+        * 0: LAPIZ, (DIBUJANDO)      
         * 2: LINEA
-        * 3: PERSONAJES
+        * 3: IMAGENES
         * 4: GOMA
         *
         */
@@ -51,7 +61,7 @@ var nameSpace = nameSpace || {};
 
             // colores
             gameState.color = colours[gameState.colorIndex],
-            $("#colores").css("background-color", gameState.color);
+                $("#colores").css("background-color", gameState.color);
 
             // grosores
             $("#grosor").removeClass("grosor_1");
@@ -66,11 +76,17 @@ var nameSpace = nameSpace || {};
             }
 
             // Herramientas
-            $(".btn_tool").removeClass("selected");
-            $(".btn_tool_"+gameState.tool).addClass("selected"); 
+            $(".btn_panel").removeClass("selected");
+            $(".btn_tool_" + gameState.tool).addClass("selected");
 
-            
 
+
+        }
+
+        this.getCenterCoordinates = function (img) {
+            var x = (GAME_WIDTH - img.width) / 2;
+            var y = (GAME_HEIGHT - img.height) / 2;
+            return { x, y };
         }
 
 
@@ -90,38 +106,42 @@ var nameSpace = nameSpace || {};
          * EVENTOS PRINCIPALES DE RATON Y TOUCH
          ***********************************************************************/
         // -----------------------------------------------------------------------
-        $("#canvas").bind('mousedown touchstart', function (e) {
+        $("#canvas, #canvas_lines").bind('mousedown touchstart', function (e) {
 
             completed = true;
             switch (gameState.tool) {
                 case 0: self.pencil_start(e); break;
+                case 2: self.line_start(e); break;
                 case 4: self.clear_start(e); break;
             }
             self.refreshScreen();
         })
 
         // -----------------------------------------------------------------------
-        $("#canvas").bind('mousemove touchmove', function (e) {
+        $("#canvas, #canvas_lines").bind('mousemove touchmove', function (e) {
             switch (gameState.tool) {
                 case 0: self.pencil_move(e); break;
+                case 2: self.line_move(e); break;
                 case 4: self.clear_move(e); break;
             }
             self.refreshScreen();
         })
 
         // -----------------------------------------------------------------------
-        $("#canvas").bind('mouseout touchend', function (e) {
+        $("#canvas, #canvas_lines").bind('mouseout touchend', function (e) {
             switch (gameState.tool) {
                 case 0: self.pencil_out(e); break;
+                case 2: self.line_out(e); break;
                 case 4: self.clear_out(e); break;
             }
             self.refreshScreen();
         })
 
         // -----------------------------------------------------------------------
-        $("#canvas").bind('mouseup touchend', function (e) {
+        $("#canvas, #canvas_lines").bind('mouseup touchend', function (e) {
             switch (gameState.tool) {
                 case 0: self.pencil_end(e); break;
+                case 2: self.line_end(e); break;
                 case 4: self.clear_end(e); break;
             }
             self.refreshScreen();
@@ -160,6 +180,17 @@ var nameSpace = nameSpace || {};
             }, 300)
         })
 
+        $(".btn_img").bind("mousedown touchstart", function (e) {
+            var img = $(this).attr("draw_img");
+            setTimeout(function () {
+                gameState.tool = 3;
+                $("#" + img.split(".")[0]).addClass("selected");
+                $("#canvas_images").css("display", "block");
+                self.createImageToDraw(img);
+            }, 301)
+        })
+
+
         $(".btn_grosor").bind("mousedown touchstart", function () {
             var id = $(this).attr("id").split("_")[1];
             id = parseInt(id, 10);
@@ -187,11 +218,15 @@ var nameSpace = nameSpace || {};
         })
 
         $("#formas").bind("mousedown touchstart", function () {
-
+            setTimeout(function () {
+                $(".panel").css("display", "none");
+                $("#panel_formas").css("display", "flex");
+            }, 300)
         })
 
         $("#linea").bind("mousedown touchstart", function () {
             gameState.tool = 2;
+            $("#canvas_lines").css("display", "block")
         })
 
         $("#colores").bind("mousedown touchstart", function () {
@@ -202,7 +237,17 @@ var nameSpace = nameSpace || {};
         })
 
         $("#personajes").bind("mousedown touchstart", function () {
+            setTimeout(function () {
+                $(".panel").css("display", "none");
+                $("#panel_personajes").css("display", "flex");
+            }, 300)
+        })
 
+        $("#tampon").bind("mousedown touchstart", function () {
+            setTimeout(function () {
+                $(".panel").css("display", "none");
+                $("#panel_tampon").css("display", "flex");
+            }, 300)
         })
 
         $("#borrar").bind("mousedown touchstart", function () {
@@ -210,6 +255,63 @@ var nameSpace = nameSpace || {};
         })
 
         /* ******************************************************************* */
+
+
+        // LINEA
+        // *****************************************************************
+        // ------------------------------------------------
+        this.line_start = function (e) {
+            x = this.getRealX(e);
+            y = this.getRealY(e);
+            drawing = true;
+
+        }
+
+        // ------------------------------------------------
+        this.line_move = function (e) {
+            if (drawing) {
+                var x2 = this.getRealX(e);
+                var y2 = this.getRealY(e);
+                ctx_aux.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+                this.line_draw(x, y, x2, y2, ctx_aux);
+            }
+        }
+
+
+        // ------------------------------------------------
+        this.line_out = function (e) {
+            if (drawing) {
+                var x2 = this.getRealX(e);
+                var y2 = this.getRealY(e);
+                ctx_aux.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+                this.line_draw(x, y, x2, y2, ctx);
+                drawing = false;
+            }
+        }
+
+        // ------------------------------------------------
+        this.line_end = function (e) {
+            if (drawing) {
+                var x2 = this.getRealX(e);
+                var y2 = this.getRealY(e);
+                this.line_draw(x, y, x2, y2, ctx);
+                ctx_aux.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+                drawing = false;
+            }
+        }
+
+        this.line_draw = function (x1, y1, x2, y2, _ctx) {
+            var size = gameState.size;
+            var color = gameState.color;
+            _ctx.strokeStyle = color;
+            _ctx.fillStyle = color;
+            _ctx.lineWidth = size * 2;
+            _ctx.beginPath();
+            _ctx.moveTo(x1, y1);
+            _ctx.lineTo(x2, y2);
+            _ctx.stroke();
+        }
+
 
 
         // LAPIZ
@@ -257,8 +359,6 @@ var nameSpace = nameSpace || {};
 
             var size = gameState.size;
             var color = gameState.color;
-
-            console.log("color: " + color);
 
             if (x1 && y1 && (x2 !== x1 || y2 !== y1)) {
                 ctx.strokeStyle = color;
@@ -421,6 +521,88 @@ var nameSpace = nameSpace || {};
                 }
             }, 100);
         };
+
+        
+        this.createImageToDraw = function (img) {        
+
+            image = new Image();
+            top_left = new Image();
+            top_middle = new Image();
+            top_rigth = new Image();
+
+            middle_left = new Image();
+            middle_middle = new Image();
+            middle_rigth = new Image();
+
+            bottom_left = new Image();
+            bottom_middle = new Image();
+            bottom_rigth = new Image();
+
+            top_left.src = _self.RouteManager.getSkinImages() + "corner.png";
+            top_middle.src = _self.RouteManager.getSkinImages() + "corner.png";
+            top_rigth.src = _self.RouteManager.getSkinImages() + "corner.png";
+
+            middle_left.src = _self.RouteManager.getSkinImages() + "corner.png";
+            middle_middle.src = _self.RouteManager.getSkinImages() + "corner.png";
+            middle_rigth.src = _self.RouteManager.getSkinImages() + "corner.png";
+
+            bottom_left.src = _self.RouteManager.getSkinImages() + "corner.png";
+            bottom_middle.src = _self.RouteManager.getSkinImages() + "corner.png";
+            bottom_rigth.src = _self.RouteManager.getSkinImages() + "corner.png";
+
+            top_left.onload = function () {              
+                var coord = self.calculateCornerCoord("TL", image);  
+                ctx_images.drawImage(top_left, coord.x, coord.y);
+            }
+            top_middle.onload = function () {
+                var coord = self.calculateCornerCoord("TM", image);
+                ctx_images.drawImage(top_middle, coord.x, coord.y);
+            }
+            top_rigth.onload = function () {
+                var coord = self.calculateCornerCoord("TR", image);
+                ctx_images.drawImage(top_rigth, coord.x, coord.y);
+            }
+
+            middle_left.onload = function () {
+                var coord = self.calculateCornerCoord("ML", image);
+                ctx_images.drawImage(middle_left, coord.x, coord.y);
+            }
+            middle_middle.onload = function () {
+                var coord = self.calculateCornerCoord("MM", image);
+                ctx_images.drawImage(middle_middle, coord.x, coord.y);
+            }
+            middle_rigth.onload = function () {
+                var coord = self.calculateCornerCoord("MR", image);
+                ctx_images.drawImage(middle_rigth, coord.x, coord.y);
+            }
+
+            bottom_left.onload = function () {
+                var coord = self.calculateCornerCoord("BL", image);
+                ctx_images.drawImage(bottom_left, coord.x, coord.y);
+            }
+            bottom_middle.onload = function () {
+                var coord = self.calculateCornerCoord("BM", image);
+                ctx_images.drawImage(bottom_middle, coord.x, coord.y);
+            }
+            bottom_rigth.onload = function () {
+                var coord = self.calculateCornerCoord("BR", image);
+                ctx_images.drawImage(bottom_rigth, coord.x, coord.y);
+            }
+
+            image.src = _self.RouteManager.getSkinImages() + img;
+            image.onload = function () {
+                var coord = self.getCenterCoordinates(image);
+                ctx_images.drawImage(image, coord.x, coord.y);
+            }
+        }
+
+        this.calculateCornerCoord = function(type,img) {
+            var first = type.split("")[0];
+            var second = type.split("")[1];
+            var x=100;
+            var y=100;
+            return {x,y};
+        }
 
 
 

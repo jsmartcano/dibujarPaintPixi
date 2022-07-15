@@ -35,9 +35,15 @@ body {
       outline: 1px solid #5f5a5a;
       top: 13px;
       left: 13px; }
+      #resizable_wrapper #game_wrapper #canvas_wrapper #canvas_lines {
+        z-index: 10; }
+      #resizable_wrapper #game_wrapper #canvas_wrapper #canvas_images {
+        z-index: 20;
+        display: none; }
       #resizable_wrapper #game_wrapper #canvas_wrapper canvas {
         width: 973px;
-        height: 562px; }
+        height: 562px;
+        position: absolute; }
     #resizable_wrapper #game_wrapper #palette {
       width: 180px;
       height: 261px;
@@ -109,18 +115,68 @@ body {
         background-color: #5e77bb; }
       #resizable_wrapper #game_wrapper #palette #color_6 {
         background-color: #000000; }
-      #resizable_wrapper #game_wrapper #palette .grosor_1,
-      #resizable_wrapper #game_wrapper #palette #grosor_1 {
+      #resizable_wrapper #game_wrapper #palette .grosor_1, #resizable_wrapper #game_wrapper #palette #grosor_1 {
         background-image: url("../images/grosor1.png") !important; }
-      #resizable_wrapper #game_wrapper #palette .grosor_2,
-      #resizable_wrapper #game_wrapper #palette #grosor_2 {
+      #resizable_wrapper #game_wrapper #palette .grosor_2, #resizable_wrapper #game_wrapper #palette #grosor_2 {
         background-image: url("../images/grosor2.png") !important; }
-      #resizable_wrapper #game_wrapper #palette .grosor_3,
-      #resizable_wrapper #game_wrapper #palette #grosor_3 {
+      #resizable_wrapper #game_wrapper #palette .grosor_3, #resizable_wrapper #game_wrapper #palette #grosor_3 {
         background-image: url("../images/grosor3.png") !important; }
-      #resizable_wrapper #game_wrapper #palette .grosor_4,
-      #resizable_wrapper #game_wrapper #palette #grosor_4 {
+      #resizable_wrapper #game_wrapper #palette .grosor_4, #resizable_wrapper #game_wrapper #palette #grosor_4 {
         background-image: url("../images/grosor4.png") !important; }
+      #resizable_wrapper #game_wrapper #palette #forma_0 {
+        background-image: url("../images/forma_0.png") !important;
+        background-size: contain; }
+      #resizable_wrapper #game_wrapper #palette #forma_1 {
+        background-image: url("../images/forma_1.png") !important;
+        background-size: contain; }
+      #resizable_wrapper #game_wrapper #palette #forma_2 {
+        background-image: url("../images/forma_2.png") !important;
+        background-size: contain; }
+      #resizable_wrapper #game_wrapper #palette #forma_3 {
+        background-image: url("../images/forma_3.png") !important;
+        background-size: contain; }
+      #resizable_wrapper #game_wrapper #palette #forma_4 {
+        background-image: url("../images/forma_4.png") !important;
+        background-size: contain; }
+      #resizable_wrapper #game_wrapper #palette #forma_5 {
+        background-image: url("../images/forma_5.png") !important;
+        background-size: contain; }
+      #resizable_wrapper #game_wrapper #palette #personaje_0 {
+        background-image: url("../images/personaje_0.png") !important;
+        background-size: contain; }
+      #resizable_wrapper #game_wrapper #palette #personaje_1 {
+        background-image: url("../images/personaje_1.png") !important;
+        background-size: contain; }
+      #resizable_wrapper #game_wrapper #palette #personaje_2 {
+        background-image: url("../images/personaje_2.png") !important;
+        background-size: contain; }
+      #resizable_wrapper #game_wrapper #palette #personaje_3 {
+        background-image: url("../images/personaje_3.png") !important;
+        background-size: contain; }
+      #resizable_wrapper #game_wrapper #palette #personaje_4 {
+        background-image: url("../images/personaje_4.png") !important;
+        background-size: contain; }
+      #resizable_wrapper #game_wrapper #palette #personaje_5 {
+        background-image: url("../images/personaje_5.png") !important;
+        background-size: contain; }
+      #resizable_wrapper #game_wrapper #palette #tampon_0 {
+        background-image: url("../images/tampon_0.png") !important;
+        background-size: contain; }
+      #resizable_wrapper #game_wrapper #palette #tampon_1 {
+        background-image: url("../images/tampon_1.png") !important;
+        background-size: contain; }
+      #resizable_wrapper #game_wrapper #palette #tampon_2 {
+        background-image: url("../images/tampon_2.png") !important;
+        background-size: contain; }
+      #resizable_wrapper #game_wrapper #palette #tampon_3 {
+        background-image: url("../images/tampon_3.png") !important;
+        background-size: contain; }
+      #resizable_wrapper #game_wrapper #palette #tampon_4 {
+        background-image: url("../images/tampon_4.png") !important;
+        background-size: contain; }
+      #resizable_wrapper #game_wrapper #palette #tampon_5 {
+        background-image: url("../images/tampon_5.png") !important;
+        background-size: contain; }
 
 @keyframes animate_btn {
   0% {
