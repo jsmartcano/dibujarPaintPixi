@@ -36,8 +36,7 @@ body {
       top: 13px;
       left: 13px; }
       #resizable_wrapper #game_wrapper #canvas_wrapper #canvas_lines {
-        z-index: 10;
-        display: none; }
+        z-index: 10; }
       #resizable_wrapper #game_wrapper #canvas_wrapper #canvas_images {
         z-index: 20;
         display: none;

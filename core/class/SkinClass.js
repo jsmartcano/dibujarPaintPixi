@@ -269,8 +269,7 @@ var nameSpace = nameSpace || {};
         })
 
         $("#linea").bind("mousedown touchstart", function () {
-            gameState.tool = 2;
-            $("#canvas_lines").css("display", "block")
+            gameState.tool = 2;           
         })
 
         $("#colores").bind("mousedown touchstart", function () {
@@ -308,6 +307,7 @@ var nameSpace = nameSpace || {};
             x = this.getRealX(e);
             y = this.getRealY(e);
             drawing = true;
+        
 
         }
 
@@ -341,7 +341,7 @@ var nameSpace = nameSpace || {};
                 this.line_draw(x, y, x2, y2, ctx);
                 ctx_lines.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
                 drawing = false; $
-                $("#canvas_lines").css("display", "none");
+                
             }
         }
 
