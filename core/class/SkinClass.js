@@ -53,11 +53,18 @@ var nameSpace = nameSpace || {};
         var app;
         var tr;
         var tl;
+        var bl;
+        var br;
+        var mv;
         var loader;
         var textures = {};
-        var draggin = false;
+        var draggin_tl = false;
+        var draggin_tr = false;
+        var draggin_bl = false;
+        var draggin_br = false;
+        var draggin_mv = false;
         var image;
-        var MIN_WIDTH = 50;
+        var MIN_IMAGE = 50;
 
         var gameState = {
             size: null,
@@ -136,7 +143,7 @@ var nameSpace = nameSpace || {};
             self.refreshScreen();
 
             app = new PIXI.Application({
-               width: GAME_WIDTH, height: GAME_HEIGHT, transparent: true
+                width: GAME_WIDTH, height: GAME_HEIGHT, transparent: true
             }
             );
             document.getElementById("canvas_images").appendChild(app.view);
@@ -226,6 +233,7 @@ var nameSpace = nameSpace || {};
 
         $(".btn_img").bind("mousedown touchstart", function (e) {
             var img = $(this).attr("id");
+            self.clearPixi();
             setTimeout(function () {
                 gameState.tool = 3;
                 $("#" + img.split(".")[0]).addClass("selected");
@@ -269,7 +277,7 @@ var nameSpace = nameSpace || {};
         })
 
         $("#linea").bind("mousedown touchstart", function () {
-            gameState.tool = 2;           
+            gameState.tool = 2;
         })
 
         $("#colores").bind("mousedown touchstart", function () {
@@ -307,7 +315,7 @@ var nameSpace = nameSpace || {};
             x = this.getRealX(e);
             y = this.getRealY(e);
             drawing = true;
-        
+
 
         }
 
@@ -341,7 +349,7 @@ var nameSpace = nameSpace || {};
                 this.line_draw(x, y, x2, y2, ctx);
                 ctx_lines.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
                 drawing = false; $
-                
+
             }
         }
 
@@ -526,9 +534,16 @@ var nameSpace = nameSpace || {};
             base_image.onload = function () {
                 ctx.drawImage(base_image, image.x, image.y, image.width, image.height);
                 var stage = app.stage;
-                for (var i = stage.children.length - 1; i >= 0; i--) { stage.removeChild(stage.children[i]); };
+                self.clearPixi();
                 $("#canvas_images").css("display", "none");
                 gameState.tool = -1;
+            }
+        }
+
+        this.clearPixi = function() {
+            while (app.stage.children.length > 0) {
+                var child = app.stage.getChildAt(0);
+                app.stage.removeChild(child);
             }
         }
 
@@ -544,59 +559,204 @@ var nameSpace = nameSpace || {};
             tl.interactive = true;
             tl.buttonMode = true;
             app.stage.addChild(tl);
-            tl.on('pointerdown', self.onDragLTStart)
-                .on('pointerup', self.onDragLTEnd)
-                .on('pointerupoutside', self.onDragLTEnd)
-                .on('pointermove', self.onDragLTMove);
+            tl.on('pointerdown', self.onDragTLStart)
+                .on('pointerup', self.onDragTLEnd)
+                .on('pointerupoutside', self.onDragTLEnd)
+                .on('pointermove', self.onDragTLMove);
 
             // tr -------------------------            
             tr = new PIXI.Sprite(textures.corner)
             tr.buttonMode = true;
             tr.interactive = true;
             app.stage.addChild(tr);
-            tr.on('pointerdown', self.onDragLRStart)
-                .on('pointerup', self.onDragLREnd)
-                .on('pointerupoutside', self.onDragLREnd)
-                .on('pointermove', self.onDragLRMove);
+            tr.on('pointerdown', self.onDragTRStart)
+                .on('pointerup', self.onDragTREnd)
+                .on('pointerupoutside', self.onDragTREnd)
+                .on('pointermove', self.onDragTRMove);
+
+            // bl -------------------------            
+            bl = new PIXI.Sprite(textures.corner)
+            bl.buttonMode = true;
+            bl.interactive = true;
+            app.stage.addChild(bl);
+            bl.on('pointerdown', self.onDragBLStart)
+                .on('pointerup', self.onDragBLEnd)
+                .on('pointerupoutside', self.onDragBLEnd)
+                .on('pointermove', self.onDragBLMove);
+
+            // br -------------------------            
+            br = new PIXI.Sprite(textures.corner)
+            br.buttonMode = true;
+            br.interactive = true;
+            app.stage.addChild(br);
+            br.on('pointerdown', self.onDragBRStart)
+                .on('pointerup', self.onDragBREnd)
+                .on('pointerupoutside', self.onDragBREnd)
+                .on('pointermove', self.onDragBRMove);
 
 
-
+            // move -------------------------            
+            mv = new PIXI.Sprite(textures.corner)
+            mv.buttonMode = true;
+            mv.interactive = true;
+            app.stage.addChild(mv);
+            mv.on('pointerdown', self.onDragMVStart)
+                .on('pointerup', self.onDragMVEnd)
+                .on('pointerupoutside', self.onDragMVEnd)
+                .on('pointermove', self.onDragMVMove);
 
             // Colocación
             self.calculateCornersCoords();
         }
 
-        this.onDragLTStart = function (e) {
-            draggin = true;
-        };
-        this.onDragLTEnd = function (e) {
-            draggin = false;
-        };
-        this.onDragLTMove = function (e) {
-            if (draggin == true) {
+
+        this.onDragBLMove = function (e) {
+
+            if (draggin_bl == true) {
 
                 var newPosition = e.data.getLocalPosition(this.parent);
 
                 // x ---------------------
-                var diff = Math.abs(tr.x - newPosition.x);
-                if (diff > MIN_WIDTH && tr.x > newPosition.x) {
-
-
-                    image.width = diff;
+                var diff_X = Math.abs(br.x - newPosition.x);
+                if (diff_X > MIN_IMAGE && br.x > newPosition.x) {
+                    image.width = diff_X;
                     image.x = newPosition.x + CORNER_WIDTH / 2;
-                    tl.x = newPosition.x;
-                    self.calculateCornersCoords();
+                }
+
+                // y ---------------------
+                var diff_Y = Math.abs(tl.y - newPosition.y);
+                if (diff_Y > MIN_IMAGE && tl.y < newPosition.y) {
+                    image.height = diff_Y;
+
                 }
 
 
+                self.calculateCornersCoords();
 
+            }
+
+        }
+        this.onDragBRMove = function (e) {
+
+            if (draggin_br == true) {
+
+                var newPosition = e.data.getLocalPosition(this.parent);
+
+                // x ---------------------
+                var diff_X = Math.abs(bl.x - newPosition.x);
+                if (diff_X > MIN_IMAGE && bl.x < newPosition.x) {
+                    image.width = diff_X;
+                }
+
+                // y ---------------------
+                var diff_Y = Math.abs(tr.y - newPosition.y);
+                if (diff_Y > MIN_IMAGE && tr.y < newPosition.y) {
+                    image.height = diff_Y;
+                }
+
+
+                self.calculateCornersCoords();
+            }
+
+        }
+
+
+        this.onDragTRMove = function (e) {
+
+            if (draggin_tr == true) {
+
+                var newPosition = e.data.getLocalPosition(this.parent);
+
+                // x ---------------------
+                var diff_X = Math.abs(tl.x - newPosition.x);
+                if (diff_X > MIN_IMAGE && tl.x < newPosition.x) {
+                    image.width = diff_X;
+                }
+
+                // y ---------------------
+                var diff_Y = Math.abs(br.y - newPosition.y);
+                if (diff_Y > MIN_IMAGE && br.y > newPosition.y) {
+                    image.height = diff_Y;
+                    image.y = newPosition.y + CORNER_HEIGHT / 2;
+                }
+
+
+                self.calculateCornersCoords();
+
+            }
+
+        }
+
+
+        // -----------------------------------
+        this.onDragTLMove = function (e) {
+            if (draggin_tl == true) {
+
+                var newPosition = e.data.getLocalPosition(this.parent);
+
+                // x ---------------------
+                var diff_X = Math.abs(tr.x - newPosition.x);
+                if (diff_X > MIN_IMAGE && tr.x > newPosition.x) {
+                    image.width = diff_X;
+                    image.x = newPosition.x + CORNER_WIDTH / 2;
+                }
+
+                // y ---------------------
+                var diff_Y = Math.abs(bl.y - newPosition.y);
+                if (diff_Y > MIN_IMAGE && bl.y > newPosition.y) {
+                    image.height = diff_Y;
+                    image.y = newPosition.y + CORNER_HEIGHT / 2;
+                }
+
+
+                self.calculateCornersCoords();
 
             }
         }
 
-        this.onDragLRStart = function (e) { };
-        this.onDragLREnd = function (e) { };
-        this.onDragLRMove = function (e) { }
+        // -----------------------------------
+        this.onDragMVMove = function (e) {
+            if (draggin_mv == true) {
+
+                var newPosition = e.data.getLocalPosition(this.parent);
+
+                var diff_X = Math.abs(mv.x - newPosition.x);
+                var diff_Y = Math.abs(mv.y - newPosition.y);
+                if (newPosition.x > mv.x) {
+                    image.x = image.x + diff_X;
+                } else {
+                    image.x = image.x - diff_X;
+                }
+
+                if (newPosition.y > mv.y) {
+                    image.y = image.y + diff_Y;
+                } else {
+                    image.y = image.y - diff_Y;
+                }
+
+
+                self.calculateCornersCoords();
+
+            }
+        }
+
+        this.onDragTLStart = function (e) { draggin_tl = true; };
+        this.onDragTLEnd = function (e) { draggin_tl = false; }
+
+        this.onDragTRStart = function (e) { draggin_tr = true; };
+        this.onDragTREnd = function (e) { draggin_tr = false; };
+
+        this.onDragBRStart = function (e) { draggin_br = true; };
+        this.onDragBREnd = function (e) { draggin_br = false; }
+
+        this.onDragBLStart = function (e) { draggin_bl = true; };
+        this.onDragBLEnd = function (e) { draggin_bl = false; }
+
+        this.onDragMVStart = function (e) { draggin_mv = true; };
+        this.onDragMVEnd = function (e) { draggin_mv = false; }
+
+
+
 
 
         this.calculateCornersCoords = function () {
@@ -606,6 +766,17 @@ var nameSpace = nameSpace || {};
 
             tr.x = image.x + image.width - (CORNER_WIDTH / 2)
             tr.y = image.y - (CORNER_HEIGHT / 2);
+
+            bl.x = image.x - (CORNER_WIDTH / 2)
+            bl.y = image.y + image.height - (CORNER_HEIGHT / 2);
+
+            br.x = image.x + image.width - (CORNER_WIDTH / 2)
+            br.y = image.y + image.height - (CORNER_HEIGHT / 2);
+
+            mv.x = (image.x + image.width / 2) - (CORNER_WIDTH / 2);
+            mv.y = (image.y + image.height / 2) - (CORNER_HEIGHT / 2);
+
+
         }
 
         // Redimensionar
