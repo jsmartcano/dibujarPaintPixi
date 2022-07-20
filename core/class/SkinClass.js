@@ -33,6 +33,8 @@ var nameSpace = nameSpace || {};
 
         var colours = ["#F8FF4B", "#D48746", "#8EAE60", "#FFFFFF", "#C03866", "#5E77BB", "#000000"];
 
+        var tintColours = [0xF8FF4B, 0xD48746, 0x8EAE602, 0xFFFFFF, 0xC03866, 0x5E77BB, 0x000000];
+
 
         var x = 0;
         var y = 0;
@@ -69,7 +71,7 @@ var nameSpace = nameSpace || {};
         var gameState = {
             size: null,
             sizeIndex: null,
-            colorInex: null,
+            colorIndex: null,
             color: null,
             tool: null
         }
@@ -82,7 +84,12 @@ var nameSpace = nameSpace || {};
         this.loadTextures = function () {
             loader = new PIXI.Loader();
             loader.add("corner", _self.RouteManager.getSkinImages() + "corner.png")
-                .add("forma_0", _self.RouteManager.getSkinImages() + "forma_0.png")
+            $(".btn_img").each(function (index, elem) {
+                var id = $(this).attr("id");
+                var draw = $(this).attr("draw_img");
+                loader.add(id, _self.RouteManager.getSkinImages() + draw);
+            })
+
             loader.load()
             loader.onComplete.add((loader, resource) => {
 
@@ -96,6 +103,14 @@ var nameSpace = nameSpace || {};
 
             });
         }
+
+        $("#activador").bind("click touchend", function(){
+            if ($("#palette").hasClass("oculto")) {
+                $("#palette").removeClass("oculto");
+            } else {
+                $("#palette").addClass("oculto");
+            }
+        })
 
         // ------------------------------------------------
         this.refreshScreen = function () {
@@ -532,27 +547,67 @@ var nameSpace = nameSpace || {};
             base_image = new Image();
             base_image.src = image.texture.textureCacheIds[1];
             base_image.onload = function () {
-                ctx.drawImage(base_image, image.x, image.y, image.width, image.height);
-                var stage = app.stage;
+
+
+                if (image.avz_color == true) {
+                    ctx_lines.fillStyle = gameState.color;
+                    ctx_lines.fillRect(image.x, image.y, image.width, image.height);
+                    ctx_lines.globalCompositeOperation = "destination-in";
+                    ctx_lines.drawImage(base_image, image.x, image.y, image.width, image.height);
+                    ctx_lines.globalCompositeOperation = "source-over";
+
+                } else{                    
+                    ctx_lines.fillRect(image.x, image.y, image.width, image.height);
+                    ctx_lines.globalCompositeOperation = "destination-in";
+                    ctx_lines.drawImage(base_image, image.x, image.y, image.width, image.height);
+                    ctx_lines.globalCompositeOperation = "source-over";
+                }
+
+                ctx.drawImage(canvas_lines, 0, 0);
+                ctx_lines.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
                 self.clearPixi();
                 $("#canvas_images").css("display", "none");
                 gameState.tool = -1;
             }
         }
 
-        this.clearPixi = function() {
+        this.clearPixi = function () {
             while (app.stage.children.length > 0) {
                 var child = app.stage.getChildAt(0);
                 app.stage.removeChild(child);
             }
         }
 
+        this.convertColor = function (colorString) {
+
+
+            const colorNumber = parseInt(colorString.slice(1), 16);
+
+
+            const rgb = colorNumber >>> 8;
+            const alpha = (colorNumber & 0xff) / 255;
+
+
+            image.tint = rgb;
+            image.alpha = alpha;
+
+        }
 
         this.createImageToDraw = function (imageName) {
             image = new PIXI.Sprite(textures[imageName]);
-            image.x = 100;
-            image.y = 100;
+            image.x = (GAME_WIDTH - image.width)/2;
+            image.y = (GAME_HEIGHT - image.height)/2;
+
             app.stage.addChild(image);
+            if (imageName.indexOf("personaje") == -1) {
+                self.convertColor(gameState.color + "FF");
+                image.avz_color = true;
+            } else {
+                image.avz_color = false;
+            }
+
+            _img = image;
 
             // tl -------------------------            
             tl = new PIXI.Sprite(textures.corner)

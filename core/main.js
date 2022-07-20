@@ -22,3 +22,4 @@ $(document).ready(function() {
 
 
 
+var _img;

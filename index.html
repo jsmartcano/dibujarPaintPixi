@@ -42,7 +42,8 @@
     <script type='text/javascript' src='includes/browser.detect.js' charset="utf-8"></script>
     <script type='text/javascript' src='includes/mustache.min.js' charset="utf-8"></script>
     <script type='text/javascript' src='includes/jquery.min.js' charset="utf-8"></script>
-    <script type='text/javascript' src='includes/pixi.min.js' charset="utf-8"></script>
+    <script type='text/javascript' src='includes/pixi.js' charset="utf-8"></script>
+    
  
 
     <script type="text/javascript" src="core/constants.js" charset="utf-8"></script>
@@ -58,7 +59,7 @@
 <body>
     <div id="resizable_wrapper">
         <div id="game_wrapper">
-            <div id="palette">
+            <div id="palette" class="oculto">
                 <div id="activador"></div>
                 <div id="panel_principal" class="panel">
                     <div id="pintar" class="btn_panel btn_tool btn_tool_0"></div>
@@ -91,34 +92,34 @@
                     <div id="color_6" class="btn_panel btn_color"></div>
                 </div>
                 <div id="panel_formas" class="panel">
-                    <div id="forma_0" class="btn_panel btn_forma btn_img" draw_img="forma_0.png"></div>
-                    <div id="forma_1" class="btn_panel btn_forma btn_img" draw_img="forma_1.png"></div>
-                    <div id="forma_2" class="btn_panel btn_forma btn_img" draw_img="forma_2.png"></div>
-                    <div id="forma_3" class="btn_panel btn_forma btn_img" draw_img="forma_3.png"></div>
-                    <div id="forma_4" class="btn_panel btn_forma btn_img" draw_img="forma_4.png"></div>
-                    <div id="forma_5" class="btn_panel btn_forma btn_img" draw_img="forma_5.png"></div>
+                    <div id="forma_0" class="btn_panel btn_forma btn_img" draw_img="imgforma_0.png"></div>
+                    <div id="forma_1" class="btn_panel btn_forma btn_img" draw_img="imgforma_1.png"></div>
+                    <div id="forma_2" class="btn_panel btn_forma btn_img" draw_img="imgforma_2.png"></div>
+                    <div id="forma_3" class="btn_panel btn_forma btn_img" draw_img="imgforma_3.png"></div>
+                    <div id="forma_4" class="btn_panel btn_forma btn_img" draw_img="imgforma_4.png"></div>
+                    <div id="forma_5" class="btn_panel btn_forma btn_img" draw_img="imgforma_5.png"></div>
                     <div class="btn_panel volver"></div>
-                    <div id="forma_6" class="btn_panel btn_forma btn_img" draw_img="forma_6.png"></div>
+                    <div id="forma_6" class="btn_panel btn_forma btn_img" draw_img="imgforma_6.png"></div>
                 </div>
                 <div id="panel_personajes" class="panel">
-                    <div id="personaje_0" class="btn_panel btn_personaje btn_img" draw_img="personaje_0.png"></div>
-                    <div id="personaje_1" class="btn_panel btn_personaje btn_img" draw_img="personaje_1.png"></div>
-                    <div id="personaje_2" class="btn_panel btn_personaje btn_img" draw_img="personaje_2.png"></div>
-                    <div id="personaje_3" class="btn_panel btn_personaje btn_img" draw_img="personaje_3.png"></div>
-                    <div id="personaje_4" class="btn_panel btn_personaje btn_img" draw_img="personaje_4.png"></div>
-                    <div id="personaje_5" class="btn_panel btn_personaje btn_img" draw_img="personaje_5.png"></div>
+                    <div id="personaje_0" class="btn_panel btn_personaje btn_img" draw_img="imgpersonaje_0.png"></div>
+                    <div id="personaje_1" class="btn_panel btn_personaje btn_img" draw_img="imgpersonaje_1.png"></div>
+                    <div id="personaje_2" class="btn_panel btn_personaje btn_img" draw_img="imgpersonaje_2.png"></div>
+                    <div id="personaje_3" class="btn_panel btn_personaje btn_img" draw_img="imgpersonaje_3.png"></div>
+                    <div id="personaje_4" class="btn_panel btn_personaje btn_img" draw_img="imgpersonaje_4.png"></div>
+                    <div id="personaje_5" class="btn_panel btn_personaje btn_img" draw_img="imgpersonaje_5.png"></div>
                     <div class="btn_panel volver"></div>
-                    <div id="personaje_6" class="btn_panel btn_personaje btn_img" draw_img="personaje_6.png"></div>
+                    <div id="personaje_6" class="btn_panel btn_personaje btn_img" draw_img="imgpersonaje_6.png"></div>
                 </div>
                 <div id="panel_tampon" class="panel">
-                    <div id="tampon_0" class="btn_panel btn_tampon btn_img" draw_img="tampon_0.png"></div>
-                    <div id="tampon_1" class="btn_panel btn_tampon btn_img" draw_img="tampon_1.png"></div>
-                    <div id="tampon_2" class="btn_panel btn_tampon btn_img" draw_img="tampon_2.png"></div>
-                    <div id="tampon_3" class="btn_panel btn_tampon btn_img" draw_img="tampon_3.png"></div>
-                    <div id="tampon_4" class="btn_panel btn_tampon btn_img" draw_img="tampon_4.png"></div>
-                    <div id="tampon_5" class="btn_panel btn_tampon btn_img" draw_img="tampon_5.png"></div>
+                    <div id="tampon_0" class="btn_panel btn_tampon btn_img" draw_img="imgtampon_0.png"></div>
+                    <div id="tampon_1" class="btn_panel btn_tampon btn_img" draw_img="imgtampon_1.png"></div>
+                    <div id="tampon_2" class="btn_panel btn_tampon btn_img" draw_img="imgtampon_2.png"></div>
+                    <div id="tampon_3" class="btn_panel btn_tampon btn_img" draw_img="imgtampon_3.png"></div>
+                    <div id="tampon_4" class="btn_panel btn_tampon btn_img" draw_img="imgtampon_4.png"></div>
+                    <div id="tampon_5" class="btn_panel btn_tampon btn_img" draw_img="imgtampon_5.png"></div>
                     <div class="btn_panel volver"></div>
-                    <div id="tampon_6" class="btn_panel btn_tampon btn_img" draw_img="tampon_6.png"></div>
+                    <div id="tampon_6" class="btn_panel btn_tampon btn_img" draw_img="imgtampon_6.png"></div>
                 </div>
             </div>
             <div id="canvas_wrapper">

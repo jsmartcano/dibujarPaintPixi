@@ -59,9 +59,11 @@ body {
       justify-content: center;
       top: 158px;
       left: 822px;
-      outline: 1px solid red;
       background-image: url("../images/paleta.png");
-      z-index: 200; }
+      z-index: 200;
+      transition: all 0.6s; }
+      #resizable_wrapper #game_wrapper #palette.oculto {
+        left: 973px; }
       #resizable_wrapper #game_wrapper #palette #activador {
         width: 20px;
         height: 74px;
@@ -150,6 +152,9 @@ body {
       #resizable_wrapper #game_wrapper #palette #forma_5 {
         background-image: url("../images/forma_5.png") !important;
         background-size: contain; }
+      #resizable_wrapper #game_wrapper #palette #forma_6 {
+        background-image: url("../images/forma_6.png") !important;
+        background-size: contain; }
       #resizable_wrapper #game_wrapper #palette #personaje_0 {
         background-image: url("../images/personaje_0.png") !important;
         background-size: contain; }
@@ -168,6 +173,9 @@ body {
       #resizable_wrapper #game_wrapper #palette #personaje_5 {
         background-image: url("../images/personaje_5.png") !important;
         background-size: contain; }
+      #resizable_wrapper #game_wrapper #palette #personaje_6 {
+        background-image: url("../images/personaje_6.png") !important;
+        background-size: contain; }
       #resizable_wrapper #game_wrapper #palette #tampon_0 {
         background-image: url("../images/tampon_0.png") !important;
         background-size: contain; }
@@ -185,6 +193,9 @@ body {
         background-size: contain; }
       #resizable_wrapper #game_wrapper #palette #tampon_5 {
         background-image: url("../images/tampon_5.png") !important;
+        background-size: contain; }
+      #resizable_wrapper #game_wrapper #palette #tampon_6 {
+        background-image: url("../images/tampon_6.png") !important;
         background-size: contain; }
 
 @keyframes animate_btn {

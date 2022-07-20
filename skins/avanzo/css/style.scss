@@ -47,6 +47,8 @@ body {
       position: absolute;
       outline: 1px solid rgb(95, 90, 90);
 
+    
+      
       display: block;
       position: absolute;
       outline: 1px solid #5f5a5a;
@@ -87,9 +89,14 @@ body {
       justify-content: center;
       top: 158px;
       left: 822px;
-      outline: 1px solid red;
+     
       background-image: url('../images/paleta.png');
       z-index: 200;
+      transition: all 0.6s;
+
+      &.oculto {
+        left: 973px;
+      }
 
       #activador {
         width: 20px;
@@ -187,7 +194,7 @@ body {
       }
 
       // formas
-      @for $i from 0 through 5 {
+      @for $i from 0 through 6 {
         #forma_#{$i} {
           background-image: url('../images/forma_#{$i}.png') !important;
           background-size: contain;
@@ -195,7 +202,7 @@ body {
       }
 
       // personajes
-      @for $i from 0 through 5 {
+      @for $i from 0 through 6 {
         #personaje_#{$i} {
           background-image: url('../images/personaje_#{$i}.png') !important;
           background-size: contain;
@@ -203,7 +210,7 @@ body {
       }
 
       // tampon
-      @for $i from 0 through 5 {
+      @for $i from 0 through 6 {
         #tampon_#{$i} {
           background-image: url('../images/tampon_#{$i}.png') !important;
           background-size: contain;
