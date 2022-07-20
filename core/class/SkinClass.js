@@ -556,7 +556,8 @@ var nameSpace = nameSpace || {};
                     ctx_lines.drawImage(base_image, image.x, image.y, image.width, image.height);
                     ctx_lines.globalCompositeOperation = "source-over";
 
-                } else{                    
+                } else{              
+                    ctx_lines.fillStyle = colours[6];      
                     ctx_lines.fillRect(image.x, image.y, image.width, image.height);
                     ctx_lines.globalCompositeOperation = "destination-in";
                     ctx_lines.drawImage(base_image, image.x, image.y, image.width, image.height);

@@ -67,7 +67,6 @@ body {
       #resizable_wrapper #game_wrapper #palette #activador {
         width: 20px;
         height: 74px;
-        border: 1px solid red;
         left: 0px;
         position: absolute;
         cursor: pointer; }
