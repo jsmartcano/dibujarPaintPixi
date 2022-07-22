@@ -162,6 +162,16 @@ var nameSpace = nameSpace || {};
             }
             );
             document.getElementById("canvas_images").appendChild(app.view);
+
+            if (GUARDAR_DATOS_EN_STORY==true) {
+                var imgData = self.getVariable("Datos");
+                if (imgData != "") {
+                    var myImage = new Image();
+                    myImage.src = imgData;
+                    ctx.drawImage(myImage, 0, 0);
+                }
+            }
+
         }
 
 
@@ -608,7 +618,7 @@ var nameSpace = nameSpace || {};
                 image.avz_color = false;
             }
 
-            _img = image;
+
 
             // tl -------------------------            
             tl = new PIXI.Sprite(textures.corner)

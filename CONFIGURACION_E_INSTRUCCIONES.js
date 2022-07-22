@@ -14,3 +14,6 @@
  */
 
 IDENTIFICADOR = "Dibujo1";
+
+
+GUARDAR_DATOS_EN_STORY = true;
