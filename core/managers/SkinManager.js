@@ -51,9 +51,9 @@ var nameSpace = nameSpace || {};
 	this.showSkin = function (visible) {
 	    _self.DebugManager.say("SHOW SKIN ... ");
 	    if (visible == true) {
-	        $("#resizable_wrapper").css("display", "block");
+	        $("#resizable_wrapper").fadeIn(500);
 	    } else {
-	        $("#resizable_wrapper").css("display", "none");
+	        $("#resizable_wrapper").fadeOut(400);
 	    }
 	};
 

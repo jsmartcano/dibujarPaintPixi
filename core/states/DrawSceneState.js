@@ -14,6 +14,8 @@ var nameSpace = nameSpace || {};
 			_self.SkinManager.showPreloadInit(false);
 			_self.StatesManager.changeState("PlayGameState");
 
+			
+
 		};
 
 	};

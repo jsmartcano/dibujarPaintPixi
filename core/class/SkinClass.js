@@ -104,7 +104,7 @@ var nameSpace = nameSpace || {};
             });
         }
 
-        $("#activador").bind("click touchend", function(){
+        $("#activador").bind("click touchend", function () {
             if ($("#palette").hasClass("oculto")) {
                 $("#palette").removeClass("oculto");
             } else {
@@ -159,18 +159,20 @@ var nameSpace = nameSpace || {};
 
             app = new PIXI.Application({
                 width: GAME_WIDTH, height: GAME_HEIGHT, transparent: true
-            }
-            );
+            });
             document.getElementById("canvas_images").appendChild(app.view);
 
-            if (GUARDAR_DATOS_EN_STORY==true) {
+            if (GUARDAR_DATOS_EN_STORY == true) {
                 var imgData = self.getVariable("Datos");
                 if (imgData != "") {
                     var myImage = new Image();
                     myImage.src = imgData;
-                    ctx.drawImage(myImage, 0, 0);
+                    myImage.onload = function () {
+                        ctx.drawImage(myImage, 0, 0);
+                    }
                 }
             }
+
 
         }
 
@@ -539,6 +541,20 @@ var nameSpace = nameSpace || {};
         }
 
 
+        // -----------------------------------
+        this.getVariable = function (variable) {
+            var varId = IDENTIFICADOR + "_" + variable;
+            var result = "";
+            _self.DebugManager.say("GET VARIABLE " + varId);
+            try {
+                var p = parent.GetPlayer();
+                result = p.GetVar(varId);
+                _self.DebugManager.say("GET VARIABLE " + varId + " => " + result);
+            } catch (ee) {
+                _self.DebugManager.say("No se ha podido hacer get de " + varId);
+            }
+            return result;
+        }
 
 
         // -----------------------------------
@@ -566,8 +582,8 @@ var nameSpace = nameSpace || {};
                     ctx_lines.drawImage(base_image, image.x, image.y, image.width, image.height);
                     ctx_lines.globalCompositeOperation = "source-over";
 
-                } else{              
-                    ctx_lines.fillStyle = colours[6];      
+                } else {
+                    ctx_lines.fillStyle = colours[6];
                     ctx_lines.fillRect(image.x, image.y, image.width, image.height);
                     ctx_lines.globalCompositeOperation = "destination-in";
                     ctx_lines.drawImage(base_image, image.x, image.y, image.width, image.height);
@@ -607,8 +623,8 @@ var nameSpace = nameSpace || {};
 
         this.createImageToDraw = function (imageName) {
             image = new PIXI.Sprite(textures[imageName]);
-            image.x = (GAME_WIDTH - image.width)/2;
-            image.y = (GAME_HEIGHT - image.height)/2;
+            image.x = (GAME_WIDTH - image.width) / 2;
+            image.y = (GAME_HEIGHT - image.height) / 2;
 
             app.stage.addChild(image);
             if (imageName.indexOf("personaje") == -1) {
