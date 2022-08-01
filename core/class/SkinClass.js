@@ -38,6 +38,8 @@ var nameSpace = nameSpace || {};
 
         var x = 0;
         var y = 0;
+        var x2 = 0;
+        var y2 = 0;
         var drawing = false;
         var completed = false;
         var self = this;
@@ -104,7 +106,8 @@ var nameSpace = nameSpace || {};
             });
         }
 
-        $("#activador").bind("click touchend", function () {
+        $("#activador").bind("click touchstart", function (e) {
+            e.preventDefault();
             if ($("#palette").hasClass("oculto")) {
                 $("#palette").removeClass("oculto");
             } else {
@@ -182,6 +185,7 @@ var nameSpace = nameSpace || {};
          ***********************************************************************/
         // -----------------------------------------------------------------------
         $("#canvas, #canvas_lines").bind('mousedown touchstart', function (e) {
+            e.preventDefault();
 
             completed = true;
             switch (gameState.tool) {
@@ -190,36 +194,67 @@ var nameSpace = nameSpace || {};
                 case 4: self.clear_start(e); break;
             }
             self.refreshScreen();
+
         })
 
         // -----------------------------------------------------------------------
         $("#canvas, #canvas_lines").bind('mousemove touchmove', function (e) {
+            e.preventDefault();
             switch (gameState.tool) {
                 case 0: self.pencil_move(e); break;
                 case 2: self.line_move(e); break;
                 case 4: self.clear_move(e); break;
             }
             self.refreshScreen();
+
         })
 
-        // -----------------------------------------------------------------------
-        $("#canvas, #canvas_lines").bind('mouseout touchend', function (e) {
+        this.endTools = function (e) {
             switch (gameState.tool) {
                 case 0: self.pencil_out(e); break;
                 case 2: self.line_out(e); break;
                 case 4: self.clear_out(e); break;
             }
             self.refreshScreen();
+        }
+
+        var x2, y2;
+        // -----------------------------------------------------------------------
+        $("#canvas_lines").on("tapend", function (e) {
+            e.preventDefault();
+            self.endTools(e);
+        })
+
+        $("#canvas_lines").on("touchend"), function (e) {
+            e.preventDefault();
+            self.endTools(e);
+        }
+
+        $("#canvas").on("touchend"), function (e) {
+            e.preventDefault();
+            self.endTools(e);
+        }
+        // -----------------------------------------------------------------------
+        $("#canvas_lines").on("touchcancel"), function (e) {
+            e.preventDefault();
+            self.endTools(e);
+        }
+        $("#canvas").on("touchcancel"), function (e) {
+            e.preventDefault();
+            self.endTools(e);
+        }
+
+
+        // -----------------------------------------------------------------------
+        $("#canvas, #canvas_lines").bind('mouseout', function (e) {
+            e.preventDefault();
+            self.endTools(e);
         })
 
         // -----------------------------------------------------------------------
-        $("#canvas, #canvas_lines").bind('mouseup touchend', function (e) {
-            switch (gameState.tool) {
-                case 0: self.pencil_end(e); break;
-                case 2: self.line_end(e); break;
-                case 4: self.clear_end(e); break;
-            }
-            self.refreshScreen();
+        $("#canvas, #canvas_lines").bind('mouseup', function (e) {
+            e.preventDefault();
+            self.endTools(e);
         })
 
         $(".btn_panel").bind("click mousedown", function () {
@@ -341,6 +376,8 @@ var nameSpace = nameSpace || {};
         this.line_start = function (e) {
             x = this.getRealX(e);
             y = this.getRealY(e);
+            x2 = x;
+            y2 = y;
             drawing = true;
 
 
@@ -349,8 +386,8 @@ var nameSpace = nameSpace || {};
         // ------------------------------------------------
         this.line_move = function (e) {
             if (drawing) {
-                var x2 = this.getRealX(e);
-                var y2 = this.getRealY(e);
+                x2 = this.getRealX(e);
+                y2 = this.getRealY(e);
                 ctx_lines.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
                 this.line_draw(x, y, x2, y2, ctx_lines);
             }
@@ -360,8 +397,6 @@ var nameSpace = nameSpace || {};
         // ------------------------------------------------
         this.line_out = function (e) {
             if (drawing) {
-                var x2 = this.getRealX(e);
-                var y2 = this.getRealY(e);
                 ctx_lines.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
                 this.line_draw(x, y, x2, y2, ctx);
                 drawing = false;
@@ -371,8 +406,6 @@ var nameSpace = nameSpace || {};
         // ------------------------------------------------
         this.line_end = function (e) {
             if (drawing) {
-                var x2 = this.getRealX(e);
-                var y2 = this.getRealY(e);
                 this.line_draw(x, y, x2, y2, ctx);
                 ctx_lines.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
                 drawing = false; $
@@ -525,19 +558,43 @@ var nameSpace = nameSpace || {};
         }
 
         this.getX = function (e) {
-            if (e.originalEvent.touches == null) {
-                return e.clientX;
-            } else {
-                return e.originalEvent.touches[0].clientX;
-            }
+            try {
+                if (e.originalEvent.touches == null) {
+                    return e.clientX;
+                }
+            } catch (ee) { }
+
+            try {
+                if (e.originalEvent.touches) {
+                    return e.originalEvent.touches[0].clientX;
+                }
+            } catch (ee) { }
+
+            try {
+                if (e.originalEvent.changedTouches) {
+                    return e.originalEvent.changedtouches[0].clientX;
+                }
+            } catch (ee) { }
         }
 
         this.getY = function (e) {
-            if (e.originalEvent.touches == null) {
-                return e.clientY;
-            } else {
-                return e.originalEvent.touches[0].clientY;
-            }
+            try {
+                if (e.originalEvent.touches == null) {
+                    return e.clientY;
+                }
+            } catch (ee) { }
+
+            try {
+                if (e.originalEvent.touches) {
+                    return e.originalEvent.touches[0].clientY;
+                }
+            } catch (ee) { }
+
+            try {
+                if (e.originalEvent.changedTouches) {
+                    return e.originalEvent.changedtouches[0].clientY;
+                }
+            } catch (ee) { }
         }
 
 
