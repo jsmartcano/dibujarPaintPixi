@@ -41,7 +41,7 @@ var nameSpace = nameSpace || {};
         var x2 = 0;
         var y2 = 0;
         var drawing = false;
-        var completed = false;
+       
         var self = this;
 
         /** 
@@ -187,7 +187,10 @@ var nameSpace = nameSpace || {};
         $("#canvas, #canvas_lines").bind('mousedown touchstart', function (e) {
             e.preventDefault();
 
-            completed = true;
+            var interact = self.getVariable("Interactuado");
+            if (interact==false) {
+                self.setVariable("Interactuado",true);
+            }
             switch (gameState.tool) {
                 case 0: self.pencil_start(e); break;
                 case 2: self.line_start(e); break;

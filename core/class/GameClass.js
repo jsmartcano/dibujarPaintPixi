@@ -27,8 +27,7 @@ var nameSpace = nameSpace || {};
 
         this.GAME_STATE = {
            data: new Array(),   
-           map: new Array(),
-           completed: false,      
+           map: new Array(),     
         }
 
       
