@@ -14,7 +14,7 @@
  *   y se llama back.png
  */
 
-IDENTIFICADOR = "Dibujo1";
+IDENTIFICADOR = "Dibujo2";
 
 
 GUARDAR_DATOS_EN_STORY = false;
